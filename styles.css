@@ -218,3 +218,68 @@ input[type="range"]{width:100%;accent-color:var(--accent)}
   .view.is-active{animation:fade .18s ease}
   @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
 }
+.exercise-help{
+  border:1px solid rgba(215,255,67,.28);
+  background:rgba(215,255,67,.07);
+  color:var(--accent);
+  border-radius:12px;
+  padding:9px 12px;
+  font-size:11px;
+  font-weight:800;
+  letter-spacing:.04em;
+  white-space:nowrap
+}
+.exercise-card.has-detail{cursor:pointer}
+.exercise-card.has-detail:hover{border-color:rgba(215,255,67,.25)}
+.exercise-dialog{
+  width:min(900px,calc(100% - 24px));
+  max-height:92vh;
+  margin:auto;
+  border:1px solid var(--line);
+  background:#0f1216;
+  color:var(--text);
+  border-radius:26px;
+  padding:0;
+  box-shadow:0 30px 100px rgba(0,0,0,.72)
+}
+.exercise-dialog::backdrop{background:rgba(0,0,0,.76);backdrop-filter:blur(8px)}
+.exercise-detail-content{padding:22px;display:grid;gap:18px}
+.exercise-visual{
+  background:linear-gradient(145deg,#171b21,#111419);
+  border:1px solid var(--line);
+  border-radius:22px;
+  overflow:hidden
+}
+.exercise-visual canvas{display:block;width:100%;height:auto;aspect-ratio:16/8}
+.exercise-intro{display:grid;gap:8px}
+.exercise-intro .muscles{color:var(--accent);font-size:11px;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+.exercise-intro p{margin:0;color:#b3bbc5;line-height:1.6}
+.exercise-info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.exercise-info{
+  background:var(--surface);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px
+}
+.exercise-info h3{margin:0 0 12px;font:800 16px/1.2 Manrope,sans-serif}
+.exercise-info ol,.exercise-info ul{margin:0;padding-left:20px}
+.exercise-info li{color:#d6dce3;line-height:1.55;margin:7px 0}
+.exercise-info.personal{
+  border-color:rgba(215,255,67,.24);
+  background:rgba(215,255,67,.05)
+}
+.exercise-prescription{
+  display:flex;flex-wrap:wrap;gap:8px;padding-top:2px
+}
+.exercise-prescription span{
+  padding:9px 12px;border:1px solid var(--line);border-radius:999px;
+  background:var(--surface-3);font-size:12px;font-weight:800
+}
+.exercise-prescription span:first-child{color:var(--accent)}
+@media(max-width:760px){
+  .exercise-info-grid{grid-template-columns:1fr}
+  .exercise-card .exercise-help{grid-column:2;justify-self:start}
+}
+@media(max-width:480px){
+  .exercise-detail-content{padding:14px}
+}
