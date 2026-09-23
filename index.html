@@ -1,0 +1,196 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#0b0d10">
+  <meta name="description" content="FIT – persönliches Hypertrophie-Training zuhause">
+  <title>FIT · Aufbau</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" data-view-link="today" aria-label="FIT Startseite">
+        <span class="brand-mark">F</span>
+        <span class="brand-copy"><strong>FIT</strong><small>AUFBAU</small></span>
+      </a>
+      <button class="icon-button" id="resetDraftBtn" type="button" title="Aktuelles Workout zurücksetzen" aria-label="Workout-Entwurf zurücksetzen">↺</button>
+    </header>
+
+    <main>
+      <section class="view is-active" data-view="today" aria-labelledby="todayTitle">
+        <div class="eyebrow">HEUTE</div>
+        <div class="hero-grid">
+          <article class="hero-card">
+            <div>
+              <p class="hero-kicker" id="todayDate"></p>
+              <h1 id="todayTitle">Dein Training.</h1>
+              <p class="hero-copy" id="todayCopy"></p>
+            </div>
+            <div class="hero-badge" id="todayBadge">A</div>
+          </article>
+
+          <article class="readiness-card">
+            <div>
+              <span class="card-label">TAGESFORM</span>
+              <strong id="readinessValue">3 / 5</strong>
+            </div>
+            <input id="readinessRange" type="range" min="1" max="5" step="1" value="3" aria-label="Tagesform von 1 bis 5">
+            <div class="readiness-scale"><span>leer</span><span>stark</span></div>
+          </article>
+        </div>
+
+        <section class="section-block">
+          <div class="section-heading">
+            <div>
+              <span class="card-label">SESSION</span>
+              <h2 id="sessionTitle">Training A</h2>
+            </div>
+            <button class="ghost-button" id="switchWorkoutBtn" type="button">wechseln</button>
+          </div>
+          <div id="sessionExercises" class="exercise-list"></div>
+        </section>
+
+        <section class="section-block workout-actions">
+          <button class="primary-button" id="startWorkoutBtn" type="button">Workout starten</button>
+          <p class="microcopy">Arbeite überwiegend mit 1–2 RIR. Saubere Wiederholungen vor zusätzlichem Gewicht.</p>
+        </section>
+      </section>
+
+      <section class="view" data-view="plan" aria-labelledby="planTitle">
+        <div class="page-intro">
+          <div class="eyebrow">PROGRAMM</div>
+          <h1 id="planTitle">A / B / C</h1>
+          <p>Drei Ganzkörpereinheiten mit Schwerpunkt Brust, Beine und Core. Rücken und Schultern wachsen proportional mit.</p>
+        </div>
+        <div class="segmented" id="planSwitcher" role="tablist" aria-label="Training auswählen">
+          <button class="is-active" type="button" data-plan="A">A</button>
+          <button type="button" data-plan="B">B</button>
+          <button type="button" data-plan="C">C</button>
+        </div>
+        <div id="planDetails" class="exercise-list"></div>
+      </section>
+
+      <section class="view" data-view="progress" aria-labelledby="progressTitle">
+        <div class="page-intro">
+          <div class="eyebrow">VERLAUF</div>
+          <h1 id="progressTitle">Fortschritt</h1>
+          <p>Gewicht und Körpermaße bleiben ausschließlich in diesem Browser gespeichert.</p>
+        </div>
+
+        <div class="metric-grid" id="metricSummary"></div>
+
+        <article class="panel">
+          <div class="section-heading compact">
+            <div>
+              <span class="card-label">KÖRPERGEWICHT</span>
+              <h2>Trend</h2>
+            </div>
+          </div>
+          <div id="weightChart" class="chart" aria-label="Gewichtsverlauf"></div>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading compact">
+            <div>
+              <span class="card-label">MESSPUNKT</span>
+              <h2>Neue Messung</h2>
+            </div>
+          </div>
+          <form id="measurementForm" class="measurement-form">
+            <label>Datum<input name="date" type="date" required></label>
+            <label>Gewicht (kg)<input name="weight" type="number" inputmode="decimal" min="30" max="250" step="0.1" placeholder="—"></label>
+            <label>Brust (cm)<input name="chest" type="number" inputmode="decimal" min="50" max="200" step="0.1" placeholder="—"></label>
+            <label>Oberschenkel (cm)<input name="thigh" type="number" inputmode="decimal" min="25" max="120" step="0.1" placeholder="—"></label>
+            <label>Taille (cm)<input name="waist" type="number" inputmode="decimal" min="40" max="200" step="0.1" placeholder="—"></label>
+            <button class="primary-button" type="submit">Messung speichern</button>
+          </form>
+        </article>
+
+        <article class="panel">
+          <div class="section-heading compact">
+            <div>
+              <span class="card-label">LETZTE EINHEITEN</span>
+              <h2>Training</h2>
+            </div>
+          </div>
+          <div id="workoutHistory" class="history-list"></div>
+        </article>
+      </section>
+
+      <section class="view" data-view="profile" aria-labelledby="profileTitle">
+        <div class="page-intro">
+          <div class="eyebrow">SYSTEM</div>
+          <h1 id="profileTitle">Dein Setup</h1>
+          <p>Die App speichert Trainingsdaten lokal. Keine Accounts, kein Tracking, kein Backend.</p>
+        </div>
+
+        <article class="panel">
+          <span class="card-label">AUSRÜSTUNG</span>
+          <div class="equipment-grid">
+            <div><strong>SZ-Stange</strong><span>bis 30 kg</span></div>
+            <div><strong>Therabänder</strong><span>mehrere Stärken</span></div>
+            <div><strong>Yogamatte</strong><span>Bodenübungen</span></div>
+          </div>
+        </article>
+
+        <article class="panel">
+          <span class="card-label">TRAININGSREGELN</span>
+          <div class="rule-list">
+            <div><b>1–2 RIR</b><span>meistens ein bis zwei saubere Wiederholungen im Tank</span></div>
+            <div><b>Double Progression</b><span>erst Wiederholungen steigern, dann Last oder Bandspannung erhöhen</span></div>
+            <div><b>2–3 min</b><span>bei schweren Mehrgelenksübungen ausreichend pausieren</span></div>
+            <div><b>Technik zuerst</b><span>keine Laststeigerung auf Kosten der Bewegungskontrolle</span></div>
+          </div>
+        </article>
+
+        <article class="panel danger-panel">
+          <span class="card-label">LOKALE DATEN</span>
+          <p>Damit entfernst du Trainingsverlauf, Messwerte und Einstellungen nur aus diesem Browser.</p>
+          <button class="danger-button" id="clearDataBtn" type="button">Lokale Daten löschen</button>
+        </article>
+      </section>
+    </main>
+
+    <nav class="bottom-nav" aria-label="Hauptnavigation">
+      <button class="is-active" type="button" data-view-link="today"><span>●</span>Heute</button>
+      <button type="button" data-view-link="plan"><span>≡</span>Plan</button>
+      <button type="button" data-view-link="progress"><span>↗</span>Verlauf</button>
+      <button type="button" data-view-link="profile"><span>○</span>Setup</button>
+    </nav>
+  </div>
+
+  <dialog id="workoutDialog" class="workout-dialog">
+    <form method="dialog" class="dialog-head">
+      <div>
+        <span class="card-label">LIVE WORKOUT</span>
+        <h2 id="liveWorkoutTitle">Training A</h2>
+      </div>
+      <button class="icon-button" value="cancel" aria-label="Workout schließen">×</button>
+    </form>
+    <div class="workout-meta">
+      <label>Tagesform
+        <select id="liveReadiness">
+          <option value="1">1 / 5</option>
+          <option value="2">2 / 5</option>
+          <option value="3">3 / 5</option>
+          <option value="4">4 / 5</option>
+          <option value="5">5 / 5</option>
+        </select>
+      </label>
+      <div class="timer-box"><span>DAUER</span><strong id="workoutTimer">00:00</strong></div>
+    </div>
+    <div id="liveExerciseList" class="live-exercise-list"></div>
+    <div class="dialog-actions">
+      <button class="secondary-button" id="saveDraftBtn" type="button">Entwurf speichern</button>
+      <button class="primary-button" id="finishWorkoutBtn" type="button">Workout abschließen</button>
+    </div>
+  </dialog>
+
+  <script src="app.js" defer></script>
+</body>
+</html>
