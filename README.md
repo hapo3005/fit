@@ -35,6 +35,16 @@ cd fit
 
 Danach `index.html` direkt öffnen oder z. B. mit VS Code Live Server starten.
 
-## GitHub Pages
+## Deployment
 
-In GitHub unter **Settings → Pages** als Quelle **Deploy from a branch**, Branch `main`, Ordner `/ (root)` auswählen.
+Das Repository nutzt GitHub Actions. Bei jedem Push auf `main` wird die statische App zunächst geprüft und anschließend über GitHub Pages veröffentlicht.
+
+Der Workflow liegt unter:
+
+```
+.github/workflows/pages.yml
+```
+
+Er prüft die erforderlichen Dateien sowie die JavaScript-Syntax, erstellt das Pages-Artefakt und deployt es anschließend.
+
+In GitHub unter **Settings → Pages → Build and deployment → Source** muss einmalig **GitHub Actions** ausgewählt sein.
