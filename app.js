@@ -224,16 +224,18 @@ function bindControls(){
 }
 
 function exerciseCard(ex,i){
-  const hasDetail=Boolean(EXERCISE_DETAILS[ex.name]);
+  const detail=EXERCISE_DETAILS[ex.name];
+  const hasDetail=Boolean(detail);
   return `<article class="exercise-card${hasDetail?" has-detail":""}" data-exercise-name="${esc(ex.name)}">
+    ${hasDetail?`<div class="exercise-preview"><canvas class="exercise-preview-canvas" width="720" height="320" data-diagram="${esc(detail.diagram)}" aria-label="${esc(ex.name)} Bewegungsablauf"></canvas></div>`:""}
     <div class="exercise-index">${String(i+1).padStart(2,"0")}</div>
-    <div>
+    <div class="exercise-main">
       <h3>${esc(ex.name)}</h3>
       <div class="exercise-meta">
         <span>${ex.sets} Sätze</span><span>${esc(ex.reps)}</span><span>${esc(ex.rest)}</span>
       </div>
     </div>
-    ${hasDetail?`<button class="exercise-help" type="button" data-exercise-help="${esc(ex.name)}">Anleitung</button>`:`<div class="exercise-focus">${esc(ex.focus)}</div>`}
+    ${hasDetail?`<button class="exercise-help" type="button" data-exercise-help="${esc(ex.name)}">Anleitung öffnen</button>`:`<div class="exercise-focus">${esc(ex.focus)}</div>`}
     <div class="exercise-note">${esc(ex.note)}</div>
   </article>`;
 }
@@ -265,11 +267,18 @@ function openExerciseDetail(name){
   $("#exerciseDialog").showModal();
 }
 
-function drawExerciseDiagram(canvas,type){
+function drawPreviewDiagrams(root=document){
+  root.querySelectorAll(".exercise-preview-canvas").forEach(canvas=>drawExerciseDiagram(canvas,canvas.dataset.diagram,true));
+}
+
+function drawExerciseDiagram(canvas,type,compact=false){
   if(!canvas) return;
   const ctx=canvas.getContext("2d");
   const w=canvas.width,h=canvas.height;
   const bg="#111419", panel="#181c22", line="#eef2f5", muted="#727b87", accent="#d7ff43";
+  const sx=w/1200, sy=h/600;
+  ctx.save();
+  ctx.scale(sx,sy);
   ctx.clearRect(0,0,w,h);
   ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
   function roundedRect(x,y,width,height,r,fill,stroke){
@@ -311,6 +320,7 @@ function drawExerciseDiagram(canvas,type){
     limb(856,396,846,218,accent,18); limb(916,399,926,218,accent,18);
     limb(790,210,982,210,accent,11); ctx.fillStyle=accent;ctx.beginPath();ctx.arc(784,210,22,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(988,210,22,0,Math.PI*2);ctx.fill();
   }
+  ctx.restore();
 }
 
 function renderToday(){
@@ -320,6 +330,7 @@ function renderToday(){
   $("#todayBadge").textContent=state.currentPlan;
   $("#sessionTitle").textContent=`Training ${state.currentPlan}`;
   $("#sessionExercises").innerHTML=PLANS[state.currentPlan].map(exerciseCard).join("");
+  drawPreviewDiagrams($("#sessionExercises"));
   if(training){
     $("#todayTitle").textContent="Heute wird aufgebaut.";
     $("#todayCopy").textContent=`Training ${state.currentPlan}: harte, kontrollierte Arbeit mit Fokus auf progressive Überlastung. Qualität vor Ego.`;
@@ -332,6 +343,7 @@ function renderToday(){
 function renderPlan(){
   $$("#planSwitcher button").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.plan===state.planPreview));
   $("#planDetails").innerHTML=PLANS[state.planPreview].map(exerciseCard).join("");
+  drawPreviewDiagrams($("#planDetails"));
 }
 
 function startWorkout(){
