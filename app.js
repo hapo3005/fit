@@ -280,7 +280,7 @@ function drawExerciseDiagram(canvas,type,compact=false){
   ctx.save();
   ctx.scale(sx,sy);
   ctx.clearRect(0,0,w,h);
-  ctx.fillStyle=bg; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle=bg; ctx.fillRect(0,0,1200,600);
   function roundedRect(x,y,width,height,r,fill,stroke){
     ctx.beginPath(); ctx.roundRect(x,y,width,height,r);
     if(fill){ctx.fillStyle=fill;ctx.fill();}
