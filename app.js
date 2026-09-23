@@ -33,76 +33,7 @@ const PLANS = {
 };
 
 
-const EXERCISE_DETAILS = {
-  "SZ-Floor-Press": {
-    muscles: "Brust · Trizeps · vordere Schulter",
-    intro: "Eine schwere Druckübung am Boden. Sie begrenzt die untere Position automatisch und eignet sich gut für kontrollierten Brust- und Trizepsaufbau zuhause.",
-    diagram: "floorPress",
-    goal: "Brustmasse und Druckkraft aufbauen, ohne eine Hantelbank zu benötigen.",
-    steps: [
-      "Lege dich flach auf die Matte und stelle beide Füße stabil auf.",
-      "Bringe die SZ-Stange sicher über die Brust. Die Handgelenke bleiben möglichst neutral.",
-      "Senke die Stange kontrolliert ab, bis die Oberarme den Boden sanft berühren.",
-      "Halte die Schulterblätter stabil und drücke die Stange kraftvoll nach oben.",
-      "Oben nicht hektisch einrasten; Spannung halten und die nächste Wiederholung kontrolliert beginnen."
-    ],
-    cues: [
-      "Schulterblätter ruhig und stabil halten.",
-      "Ellbogen nicht maximal seitlich abspreizen.",
-      "Absenken kontrollieren statt die Oberarme auf den Boden fallen zu lassen.",
-      "Nur so schwer trainieren, dass Start- und Endposition sicher bleiben."
-    ],
-    mistakes: [
-      "Die Stange ohne sichere Ablage- oder Startmöglichkeit verwenden.",
-      "Mit Schwung vom Boden abprallen.",
-      "Schultern Richtung Ohren ziehen.",
-      "Gewicht erhöhen, obwohl Wiederholungen oder Handgelenke instabil werden."
-    ],
-    personal: "Wenn du die SZ-Stange allein nicht zuverlässig und sicher in die Start- und Endposition bekommst, ist die band-resistierte Liegestütze für diesen Trainingstag die bessere Hauptübung.",
-    progression: [
-      "Im Bereich von 6–12 Wiederholungen arbeiten.",
-      "Erst Wiederholungen steigern, bis alle vier Sätze sauber am oberen Ende liegen.",
-      "Dann die Last in der kleinsten sinnvollen Stufe erhöhen.",
-      "Wenn 30 kg langfristig zu leicht werden, zusätzliche Bandspannung oder schwierigere Liegestützvarianten nutzen."
-    ],
-    prescription: ["4 Sätze","6–12 Wdh.","2–3 min Pause"]
-  },
-  "Split Squat": {
-    muscles: "Quadrizeps · Gesäß · Adduktoren · Core",
-    intro: "Eine einbeinbetonte Kniebeuge, mit der begrenztes Zusatzgewicht sehr effektiv wird. Sie ist deshalb eine Schlüsselübung für kräftigere, muskulösere Beine zuhause.",
-    diagram: "splitSquat",
-    goal: "Quadrizeps und Gesäß mit hoher relativer Belastung trainieren und gleichzeitig Bein- und Beckenstabilität verbessern.",
-    steps: [
-      "Stelle einen Fuß nach vorn und den anderen deutlich nach hinten. Der Stand ist eher lang als schmal.",
-      "Belaste den vorderen Fuß vollständig: Ferse, Großzehen- und Kleinzehenballen bleiben am Boden.",
-      "Spanne Bauch und Gesäß an und senke den Körper kontrolliert nach unten.",
-      "Das vordere Knie folgt der Richtung der Fußspitze und darf sich kontrolliert nach vorn bewegen.",
-      "Stoppe dort, wo Knie, Hüfte und Rücken stabil und schmerzfrei bleiben.",
-      "Drücke dich über den gesamten vorderen Fuß wieder nach oben."
-    ],
-    cues: [
-      "Bei Bedarf mit einer Hand leicht an Wand oder Möbelstück festhalten.",
-      "Balance soll nicht der limitierende Faktor sein; Ziel ist die Beinmuskulatur.",
-      "Das Knie nicht nach innen kollabieren lassen.",
-      "Kontrolliert absenken und ohne Federn aus der Tiefe hochkommen."
-    ],
-    mistakes: [
-      "Zu kurzer Stand, sodass die Position instabil und eingeengt wird.",
-      "Vordere Ferse hebt vom Boden ab.",
-      "Knie fällt deutlich nach innen.",
-      "Oberkörper oder Becken verdrehen sich.",
-      "Zusatzgewicht erhöhen, bevor die Bewegung stabil beherrscht wird."
-    ],
-    personal: "Für dein Knie gilt: schmerzfreie Bewegungsamplitude ist wichtiger als maximale Tiefe. Beginne notfalls nur mit Körpergewicht und leichter Stütze. Ein leichtes Vorneigen des Oberkörpers ist in Ordnung, solange Rücken und Becken kontrolliert bleiben.",
-    progression: [
-      "Im Bereich von 8–15 sauberen Wiederholungen pro Bein arbeiten.",
-      "Zuerst die Bewegung und Balance mit Körpergewicht stabilisieren.",
-      "Dann Gewichtsscheibe oder SZ-Last ergänzen und schrittweise erhöhen.",
-      "Wenn die Last begrenzt ist, die Abwärtsphase auf etwa drei Sekunden verlängern oder die Variante später anspruchsvoller gestalten."
-    ],
-    prescription: ["4 Sätze je Bein","8–15 Wdh.","2 min Pause"]
-  }
-};
+const EXERCISE_DETAILS = window.EXERCISE_DETAILS || {};
 
 const STORAGE = {
   workouts:"fit_workouts_v1",
@@ -205,6 +136,13 @@ function bindControls(){
   });
   $("#measurementForm").addEventListener("submit",saveMeasurement);
   document.addEventListener("click",e=>{
+    const startFromDetail=e.target.closest("[data-start-from-detail]");
+    if(startFromDetail){
+      e.preventDefault();
+      if($("#exerciseDialog").open) $("#exerciseDialog").close();
+      startWorkout();
+      return;
+    }
     const help=e.target.closest("[data-exercise-help]");
     if(help){
       e.preventDefault();
@@ -226,101 +164,60 @@ function bindControls(){
 function exerciseCard(ex,i){
   const detail=EXERCISE_DETAILS[ex.name];
   const hasDetail=Boolean(detail);
-  return `<article class="exercise-card${hasDetail?" has-detail":""}" data-exercise-name="${esc(ex.name)}">
-    ${hasDetail?`<div class="exercise-preview"><canvas class="exercise-preview-canvas" width="720" height="320" data-diagram="${esc(detail.diagram)}" aria-label="${esc(ex.name)} Bewegungsablauf"></canvas></div>`:""}
+  const visual=detail?.visual || "";
+  return `<article class="exercise-card premium-exercise-card${hasDetail?" has-detail":""}" data-exercise-name="${esc(ex.name)}">
+    ${hasDetail&&visual?`<div class="exercise-preview premium-preview"><img loading="lazy" src="${visual}" alt="${esc(ex.name)} – Ausführung und Muskelgruppen"></div>`:""}
     <div class="exercise-index">${String(i+1).padStart(2,"0")}</div>
     <div class="exercise-main">
+      <span class="exercise-category">${esc(ex.focus)}</span>
       <h3>${esc(ex.name)}</h3>
       <div class="exercise-meta">
         <span>${ex.sets} Sätze</span><span>${esc(ex.reps)}</span><span>${esc(ex.rest)}</span>
       </div>
     </div>
-    ${hasDetail?`<button class="exercise-help" type="button" data-exercise-help="${esc(ex.name)}">Anleitung öffnen</button>`:`<div class="exercise-focus">${esc(ex.focus)}</div>`}
-    <div class="exercise-note">${esc(ex.note)}</div>
+    ${hasDetail?`<button class="exercise-help premium-help" type="button" data-exercise-help="${esc(ex.name)}">Anleitung öffnen <span>→</span></button>`:`<div class="exercise-focus">${esc(ex.focus)}</div>`}
+    <div class="exercise-note"><span class="cue-dot"></span>${esc(ex.note)}</div>
   </article>`;
 }
 
+function findPlanExercise(name){
+  for(const plan of Object.values(PLANS)){
+    const found=plan.find(ex=>ex.name===name);
+    if(found) return found;
+  }
+  return null;
+}
 
 function openExerciseDetail(name){
   const d=EXERCISE_DETAILS[name];
   if(!d) return;
+  const ex=findPlanExercise(name);
   $("#exerciseDialogTitle").textContent=name;
+  const prescription=ex ? [`${ex.sets} Sätze`,ex.reps,`Pause ${ex.rest}`] : [];
   $("#exerciseDetailContent").innerHTML=`
-    <div class="exercise-visual">
-      <canvas id="exerciseDiagram" width="1200" height="600" aria-label="${esc(name)} Start- und Endposition"></canvas>
+    <section class="exercise-detail-hero">
+      ${d.visual?`<img src="${d.visual}" alt="${esc(name)} – Start- und Endposition sowie beanspruchte Muskelgruppen">`:""}
+      <div class="exercise-detail-overlay">
+        <span>PRIMÄR BEANSPRUCHT</span>
+        <strong>${esc(d.muscles)}</strong>
+      </div>
+    </section>
+    <section class="exercise-detail-summary">
+      <div>
+        <span class="muscles">${esc(d.muscles)}</span>
+        <p>${esc(d.intro)}</p>
+      </div>
+      <div class="exercise-prescription">${prescription.map(x=>`<span>${esc(x)}</span>`).join("")}</div>
+    </section>
+    <div class="exercise-info-grid premium-info-grid">
+      <section class="exercise-info"><div class="info-icon">≡</div><h3>So geht’s</h3><ol>${d.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
+      <section class="exercise-info"><div class="info-icon">✓</div><h3>Achte darauf</h3><ul>${d.cues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+      <section class="exercise-info"><div class="info-icon">×</div><h3>Häufige Fehler</h3><ul>${d.mistakes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+      <section class="exercise-info"><div class="info-icon">↗</div><h3>Progression</h3><ul>${d.progression.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
+      ${d.personal?`<section class="exercise-info personal"><div class="info-icon">!</div><h3>Für dich wichtig</h3><p>${esc(d.personal)}</p></section>`:""}
     </div>
-    <div class="exercise-intro">
-      <span class="muscles">${esc(d.muscles)}</span>
-      <p>${esc(d.intro)}</p>
-      <div class="exercise-prescription">${d.prescription.map(x=>`<span>${esc(x)}</span>`).join("")}</div>
-    </div>
-    <div class="exercise-info-grid">
-      <section class="exercise-info"><h3>So geht’s</h3><ol>${d.steps.map(x=>`<li>${esc(x)}</li>`).join("")}</ol></section>
-      <section class="exercise-info"><h3>Achte darauf</h3><ul>${d.cues.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
-      <section class="exercise-info"><h3>Häufige Fehler</h3><ul>${d.mistakes.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
-      <section class="exercise-info"><h3>Progression</h3><ul>${d.progression.map(x=>`<li>${esc(x)}</li>`).join("")}</ul></section>
-      <section class="exercise-info personal"><h3>Für dich wichtig</h3><p>${esc(d.personal)}</p></section>
-      <section class="exercise-info"><h3>Trainingsziel</h3><p>${esc(d.goal)}</p></section>
-    </div>`;
-  const canvas=$("#exerciseDiagram");
-  drawExerciseDiagram(canvas,d.diagram);
+    <button class="primary-button detail-workout-button" type="button" data-start-from-detail>Workout starten</button>`;
   $("#exerciseDialog").showModal();
-}
-
-function drawPreviewDiagrams(root=document){
-  root.querySelectorAll(".exercise-preview-canvas").forEach(canvas=>drawExerciseDiagram(canvas,canvas.dataset.diagram,true));
-}
-
-function drawExerciseDiagram(canvas,type,compact=false){
-  if(!canvas) return;
-  const ctx=canvas.getContext("2d");
-  const w=canvas.width,h=canvas.height;
-  const bg="#111419", panel="#181c22", line="#eef2f5", muted="#727b87", accent="#d7ff43";
-  const sx=w/1200, sy=h/600;
-  ctx.save();
-  ctx.scale(sx,sy);
-  ctx.clearRect(0,0,w,h);
-  ctx.fillStyle=bg; ctx.fillRect(0,0,1200,600);
-  function roundedRect(x,y,width,height,r,fill,stroke){
-    ctx.beginPath(); ctx.roundRect(x,y,width,height,r);
-    if(fill){ctx.fillStyle=fill;ctx.fill();}
-    if(stroke){ctx.strokeStyle=stroke;ctx.lineWidth=2;ctx.stroke();}
-  }
-  roundedRect(28,28,552,544,28,panel,"#2a3038");
-  roundedRect(620,28,552,544,28,panel,"#2a3038");
-  ctx.font="800 27px Arial"; ctx.fillStyle=accent; ctx.fillText(type==="splitSquat"?"START":"UNTEN",70,82); ctx.fillText(type==="splitSquat"?"TIEF":"OBEN",662,82);
-  ctx.font="700 16px Arial";ctx.fillStyle=muted;
-  ctx.fillText(type==="splitSquat"?"STABILER LANGER STAND":"OBERARME SANFT AM BODEN",70,112);
-  ctx.fillText(type==="splitSquat"?"KONTROLLIERT ABSENKEN":"KRAFTVOLL KONTROLLIERT DRÜCKEN",662,112);
-  ctx.lineCap="round";ctx.lineJoin="round";
-
-  function limb(x1,y1,x2,y2,color=line,width=17){ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.strokeStyle=color;ctx.lineWidth=width;ctx.stroke();}
-  function head(x,y){ctx.beginPath();ctx.arc(x,y,31,0,Math.PI*2);ctx.fillStyle=line;ctx.fill();}
-  function joint(x,y,color=accent){ctx.beginPath();ctx.arc(x,y,9,0,Math.PI*2);ctx.fillStyle=color;ctx.fill();}
-
-  if(type==="splitSquat"){
-    ctx.strokeStyle="#3a414b";ctx.lineWidth=3;ctx.setLineDash([10,10]);
-    limb(58,492,550,492,"#3a414b",3);limb(650,492,1140,492,"#3a414b",3);ctx.setLineDash([]);
-
-    head(294,166); limb(294,205,294,330); limb(292,244,238,294,line,15); limb(292,244,346,294,line,15);
-    limb(294,330,224,412,accent,21); limb(224,412,218,486,accent,21); joint(224,412);
-    limb(294,330,390,407,line,18); limb(390,407,438,482,line,18); limb(184,492,244,492,line,12); limb(430,492,470,492,line,12);
-
-    head(876,182); limb(876,220,846,342); limb(864,255,810,310,line,15); limb(864,255,918,304,line,15);
-    limb(846,342,756,402,accent,21); limb(756,402,742,486,accent,21); joint(756,402);
-    limb(846,342,952,406,line,18); limb(952,406,1016,482,line,18); limb(710,492,774,492,line,12); limb(1008,492,1050,492,line,12);
-    ctx.setLineDash([7,7]);limb(756,402,756,486,accent,4);ctx.setLineDash([]);
-  }else{
-    roundedRect(76,438,456,35,18,"#252b33"); roundedRect(660,438,456,35,18,"#252b33");
-    head(176,382); limb(212,397,382,405); limb(350,405,420,350); limb(420,350,472,435);
-    limb(272,396,254,290,accent,18); limb(332,399,350,290,accent,18);
-    limb(200,282,406,282,accent,11); ctx.fillStyle=accent;ctx.beginPath();ctx.arc(194,282,22,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(412,282,22,0,Math.PI*2);ctx.fill();
-
-    head(760,382); limb(796,397,966,405); limb(934,405,1004,350); limb(1004,350,1056,435);
-    limb(856,396,846,218,accent,18); limb(916,399,926,218,accent,18);
-    limb(790,210,982,210,accent,11); ctx.fillStyle=accent;ctx.beginPath();ctx.arc(784,210,22,0,Math.PI*2);ctx.fill();ctx.beginPath();ctx.arc(988,210,22,0,Math.PI*2);ctx.fill();
-  }
-  ctx.restore();
 }
 
 function renderToday(){
@@ -330,7 +227,6 @@ function renderToday(){
   $("#todayBadge").textContent=state.currentPlan;
   $("#sessionTitle").textContent=`Training ${state.currentPlan}`;
   $("#sessionExercises").innerHTML=PLANS[state.currentPlan].map(exerciseCard).join("");
-  drawPreviewDiagrams($("#sessionExercises"));
   if(training){
     $("#todayTitle").textContent="Heute wird aufgebaut.";
     $("#todayCopy").textContent=`Training ${state.currentPlan}: harte, kontrollierte Arbeit mit Fokus auf progressive Überlastung. Qualität vor Ego.`;
@@ -343,7 +239,6 @@ function renderToday(){
 function renderPlan(){
   $$("#planSwitcher button").forEach(btn=>btn.classList.toggle("is-active",btn.dataset.plan===state.planPreview));
   $("#planDetails").innerHTML=PLANS[state.planPreview].map(exerciseCard).join("");
-  drawPreviewDiagrams($("#planDetails"));
 }
 
 function startWorkout(){
