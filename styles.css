@@ -283,3 +283,38 @@ input[type="range"]{width:100%;accent-color:var(--accent)}
 @media(max-width:480px){
   .exercise-detail-content{padding:14px}
 }
+
+.exercise-card.has-detail{
+  grid-template-columns:180px 54px minmax(0,1fr) auto;
+  align-items:center;
+}
+.exercise-preview{
+  grid-row:1 / span 2;
+  width:180px;
+  border:1px solid var(--line);
+  border-radius:16px;
+  overflow:hidden;
+  background:#111419;
+}
+.exercise-preview canvas{
+  display:block;
+  width:100%;
+  height:auto;
+  aspect-ratio:2.25/1;
+}
+.exercise-card.has-detail .exercise-note{
+  grid-column:2 / -1;
+}
+@media(max-width:760px){
+  .exercise-card.has-detail{
+    grid-template-columns:48px minmax(0,1fr);
+  }
+  .exercise-preview{
+    grid-column:1 / -1;
+    grid-row:auto;
+    width:100%;
+  }
+  .exercise-card.has-detail .exercise-note{
+    grid-column:1 / -1;
+  }
+}
